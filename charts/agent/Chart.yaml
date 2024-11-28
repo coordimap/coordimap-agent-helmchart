@@ -1,0 +1,8 @@
+apiVersion: v2
+name: coordimap-agent
+description: A Helm chart for deploying Coordimap agent in Kubernetes
+version: 0.1.0
+appVersion: "latest"
+maintainers:
+  - name: "Ermal Guni"
+    email: "ermalguni@gmail.com"

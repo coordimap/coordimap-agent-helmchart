@@ -1,0 +1,69 @@
+# Default values for coordimap chart
+
+image:
+  repository: coordimap/coordimap-agent
+  tag: latest
+  pullPolicy: Always
+
+resources:
+  requests:
+    memory: "150M"
+    cpu: "500m"
+    ephemeral-storage: "15Mi"
+  limits:
+    memory: "150M"
+    cpu: "500m"
+    ephemeral-storage: "15Mi"
+
+# API configuration
+apiKey: "your-api-key-here"
+endpoint: "https://api.coordimap.com/collector/crawlers/infra"
+debug: true
+
+# Data sources configuration
+dataSources:
+  # Example of multiple PostgreSQL databases
+  postgres: []
+  #   - id: users-db-001
+  #     dbName: users
+  #     dbHost: users-db.example.com
+  #     dbUser: users_admin
+  #     dbPass: users_pwd
+  #     crawlInterval: 60s
+  #   - id: orders-db-001
+  #     dbName: orders
+  #     dbHost: orders-db.example.com
+  #     dbUser: orders_admin
+  #     dbPass: orders_pwd
+  #     crawlInterval: 30s
+  #
+  # # Example of a single MariaDB instance
+  mariadb: []
+  #   - id: analytics-001
+  #     dbName: analytics
+  #     dbHost: analytics-db.example.com
+  #     dbUser: analytics_user
+  #     dbPass: analytics_pwd
+  #     crawlInterval: 120s
+  #
+  # # Example of multiple Kubernetes clusters
+  kubernetes: []
+  #   - id: prod-cluster-001
+  #     inCluster: true
+  #     crawlInterval: 30s
+  #   - id: staging-cluster-001
+  #     inCluster: false
+  #     crawlInterval: 60s
+  #
+  # # Example of multiple AWS regions
+  aws: []
+  #   - id: us-west-prod-001
+  #     region: us-west-2
+  #     accessKey: AKIAXXXXXXXXXXXXXXXX
+  #     secretKey: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  #     crawlInterval: 120s
+  #   - id: eu-west-prod-001
+  #     region: eu-west-1
+  #     accessKey: AKIAYYYYYYYYYYYYYYY
+  #     secretKey: YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+  #     crawlInterval: 120s

@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "image": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "pullPolicy": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "repository",
+        "tag"
+      ]
+    },
+    "resources": {
+      "type": "object"
+    },
+    "apiKey": {
+      "type": "string"
+    },
+    "endpoint": {
+      "type": "string"
+    },
+    "debug": {
+      "type": "boolean"
+    },
+    "dataSources": {
+      "type": "object",
+      "properties": {
+        "postgres": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "dbName": {
+                "type": "string"
+              },
+              "dbHost": {
+                "type": "string"
+              },
+              "dbUser": {
+                "type": "string"
+              },
+              "dbPass": {
+                "type": "string"
+              },
+              "crawlInterval": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "dbName",
+              "dbHost",
+              "dbUser",
+              "dbPass",
+              "crawlInterval"
+            ]
+          }
+        },
+        "mariadb": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "dbName": {
+                "type": "string"
+              },
+              "dbHost": {
+                "type": "string"
+              },
+              "dbUser": {
+                "type": "string"
+              },
+              "dbPass": {
+                "type": "string"
+              },
+              "crawlInterval": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "dbName",
+              "dbHost",
+              "dbUser",
+              "dbPass",
+              "crawlInterval"
+            ]
+          }
+        },
+        "mysql": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "dbName": {
+                "type": "string"
+              },
+              "dbHost": {
+                "type": "string"
+              },
+              "dbUser": {
+                "type": "string"
+              },
+              "dbPass": {
+                "type": "string"
+              },
+              "crawlInterval": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "dbName",
+              "dbHost",
+              "dbUser",
+              "dbPass",
+              "crawlInterval"
+            ]
+          }
+        },
+        "kubernetes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "inCluster": {
+                "type": "boolean"
+              },
+              "crawlInterval": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "inCluster",
+              "crawlInterval"
+            ]
+          }
+        },
+        "aws": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "region": {
+                "type": "string"
+              },
+              "accessKey": {
+                "type": "string"
+              },
+              "secretKey": {
+                "type": "string"
+              },
+              "crawlInterval": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "region",
+              "accessKey",
+              "secretKey",
+              "crawlInterval"
+            ]
+          }
+        },
+        "mongodb": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "dbName": {
+                "type": "string"
+              },
+              "dbHost": {
+                "type": "string"
+              },
+              "dbUser": {
+                "type": "string"
+              },
+              "dbPass": {
+                "type": "string"
+              },
+              "crawlInterval": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "dbName",
+              "dbHost",
+              "dbUser",
+              "dbPass",
+              "crawlInterval"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "image",
+    "apiKey",
+    "endpoint"
+  ]
+}

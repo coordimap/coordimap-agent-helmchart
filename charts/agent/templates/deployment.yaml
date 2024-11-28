@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-agent
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-agent
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-agent
+    spec:
+      containers:
+        - name: coordimap-agent
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - "/agent"
+          args:
+            - "--debug={{ .Values.debug }}"
+            - "--config"
+            - "/config.yaml"
+            - "--endpoint"
+            - "{{ .Values.endpoint }}"
+          env:
+            - name: API_KEY
+              value: "{{ .Values.apiKey }}"
+          volumeMounts:
+            - mountPath: /config.yaml
+              subPath: config.yaml
+              name: coordimap-config-file
+              readOnly: true
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: coordimap-config-file
+          configMap:
+            name: {{ .Release.Name }}-config
+            items:
+              - key: config.yaml
+                path: config.yaml

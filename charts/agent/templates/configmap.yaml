@@ -1,0 +1,93 @@
+{{- include "coordimap.datasource.config" . -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  namespace: {{ .Release.Namespace }}
+data:
+  config.yaml: |-
+    coordimap:
+      api_key: ${API_KEY}
+      data_sources:
+        {{- range .Values.dataSources.postgres }}
+        - type: postgres
+          id: {{ .id }}
+          config:
+            - name: db_name
+              value: {{ .dbName }}
+            - name: db_host
+              value: {{ .dbHost }}
+            - name: db_user
+              value: {{ .dbUser }}
+            - name: db_pass
+              value: {{ .dbPass }}
+            - name: crawl_interval
+              value: {{ .crawlInterval }}
+        {{- end }}
+        {{- range .Values.dataSources.mariadb }}
+        - type: mariadb
+          id: {{ .id }}
+          config:
+            - name: db_name
+              value: {{ .dbName }}
+            - name: db_host
+              value: {{ .dbHost }}
+            - name: db_user
+              value: {{ .dbUser }}
+            - name: db_pass
+              value: {{ .dbPass }}
+            - name: crawl_interval
+              value: {{ .crawlInterval }}
+        {{- end }}
+        {{- range .Values.dataSources.mysql }}
+        - type: mysql
+          id: {{ .id }}
+          config:
+            - name: db_name
+              value: {{ .dbName }}
+            - name: db_host
+              value: {{ .dbHost }}
+            - name: db_user
+              value: {{ .dbUser }}
+            - name: db_pass
+              value: {{ .dbPass }}
+            - name: crawl_interval
+              value: {{ .crawlInterval }}
+        {{- end }}
+        {{- range .Values.dataSources.kubernetes }}
+        - type: kubernetes
+          id: {{ .id }}
+          config:
+            - name: in_cluster
+              value: {{ .inCluster | quote }}
+            - name: crawl_interval
+              value: {{ .crawlInterval }}
+        {{- end }}
+        {{- range .Values.dataSources.aws }}
+        - type: aws
+          id: {{ .id }}
+          config:
+            - name: region
+              value: {{ .region }}
+            - name: access_key
+              value: {{ .accessKey }}
+            - name: secret_key
+              value: {{ .secretKey }}
+            - name: crawl_interval
+              value: {{ .crawlInterval }}
+        {{- end }}
+        {{- range .Values.dataSources.mongodb }}
+        - type: mongodb
+          id: {{ .id }}
+          config:
+            - name: db_name
+              value: {{ .dbName }}
+            - name: db_host
+              value: {{ .dbHost }}
+            - name: db_user
+              value: {{ .dbUser }}
+            - name: db_pass
+              value: {{ .dbPass }}
+            - name: crawl_interval
+              value: {{ .crawlInterval }}
+        {{- end }}

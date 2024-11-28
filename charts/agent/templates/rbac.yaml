@@ -1,0 +1,48 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-agent-cluster-role
+  namespace: {{ .Release.Namespace }}
+rules:
+  - verbs:
+      - "get"
+      - "list"
+    apiGroups:
+      - ""
+      - "apps"
+      - "batch"
+      - "storage"
+      - "storage.k8s.io"
+      - "extensions"
+      - "networking.k8s.io"
+    resources:
+      - "nodes"
+      - "namespaces"
+      - "pods"
+      - "services"
+      - "secrets"
+      - "endpoints"
+      - "configmaps"
+      - "persistentvolumeclaims"
+      - "persistentvolumes"
+      - "deployments"
+      - "statefulsets"
+      - "daemonsets"
+      - "jobs"
+      - "cronjobs"
+      - "storageclasses"
+      - "ingresses"
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ .Release.Name }}-agent-rolebinding
+  namespace: {{ .Release.Namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ .Release.Name }}-agent-cluster-role
+  apiGroup: rbac.authorization.k8s.io
