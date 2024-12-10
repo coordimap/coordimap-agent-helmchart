@@ -91,3 +91,20 @@ data:
             - name: crawl_interval
               value: {{ .crawlInterval }}
         {{- end }}
+        {{- range .Values.dataSources.gcp }}
+            - type: gcp
+              id: {{ .id }}
+              config:
+                {{- if .inCluster }}
+                - name: in_cluster
+                  value: {{ .inCluster | quote }}
+                {{- end }}
+                {{- if .credentialsFile }}
+                - name: credentials_file
+                  value: {{ .credentialsFile }}
+                {{- end }}
+                - name: project_id
+                  value: {{ .projectId }}
+                - name: crawl_interval
+                  value: {{ .crawlInterval }}
+        {{- end }}

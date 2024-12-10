@@ -67,3 +67,9 @@ dataSources:
   #     accessKey: AKIAYYYYYYYYYYYYYYY
   #     secretKey: YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
   #     crawlInterval: 120s
+  gcp: []
+  #   - id: gcp_test_id
+  #     crawlInterval: 120s
+  #     inCloud: true
+  #     credentialsFile: ""
+  #     projectId: ""

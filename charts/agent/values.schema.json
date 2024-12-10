@@ -15,10 +15,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "repository",
-        "tag"
-      ]
+      "required": ["repository", "tag"]
     },
     "resources": {
       "type": "object"
@@ -59,14 +56,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "id",
-              "dbName",
-              "dbHost",
-              "dbUser",
-              "dbPass",
-              "crawlInterval"
-            ]
+            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"]
           }
         },
         "mariadb": {
@@ -93,14 +83,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "id",
-              "dbName",
-              "dbHost",
-              "dbUser",
-              "dbPass",
-              "crawlInterval"
-            ]
+            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"]
           }
         },
         "mysql": {
@@ -127,14 +110,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "id",
-              "dbName",
-              "dbHost",
-              "dbUser",
-              "dbPass",
-              "crawlInterval"
-            ]
+            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"]
           }
         },
         "kubernetes": {
@@ -152,10 +128,35 @@
                 "type": "string"
               }
             },
-            "required": [
-              "id",
-              "inCluster",
-              "crawlInterval"
+            "required": ["id", "inCluster", "crawlInterval"]
+          }
+        },
+        "gcp": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "crawlInterval": {
+                "type": "string"
+              },
+              "inCloud": {
+                "type": "boolean"
+              },
+              "credentialsFile": {
+                "type": "string"
+              },
+              "projectId": {
+                "type": "string"
+              }
+            },
+            "required": ["project_id", "crawl_interval"],
+            "oneOf": [
+              {
+                "required": ["inCloud"]
+              },
+              {
+                "required": ["credentialsFile"]
+              }
             ]
           }
         },
@@ -180,13 +181,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "id",
-              "region",
-              "accessKey",
-              "secretKey",
-              "crawlInterval"
-            ]
+            "required": ["id", "region", "accessKey", "secretKey", "crawlInterval"]
           }
         },
         "mongodb": {
@@ -213,23 +208,12 @@
                 "type": "string"
               }
             },
-            "required": [
-              "id",
-              "dbName",
-              "dbHost",
-              "dbUser",
-              "dbPass",
-              "crawlInterval"
-            ]
+            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"]
           }
         }
       },
       "additionalProperties": false
     }
   },
-  "required": [
-    "image",
-    "apiKey",
-    "endpoint"
-  ]
+  "required": ["image", "apiKey", "endpoint"]
 }
