@@ -54,9 +54,29 @@
               },
               "crawlInterval": {
                 "type": "string"
-              }
+              },
+              "mappingDataSourceId": { "type": "string" },
+              "mappingInternalId": { "type": "string" }
             },
-            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"]
+            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"],
+            "allOf": [
+              {
+                "if": {
+                  "required": ["mappingDataSourceId"]
+                },
+                "then": {
+                  "required": ["mappingInternalId"]
+                }
+              },
+              {
+                "if": {
+                  "required": ["mappingInternalId"]
+                },
+                "then": {
+                  "required": ["mappingDataSourceId"]
+                }
+              }
+            ]
           }
         },
         "mariadb": {
@@ -81,9 +101,29 @@
               },
               "crawlInterval": {
                 "type": "string"
-              }
+              },
+              "mappingDataSourceId": { "type": "string" },
+              "mappingInternalId": { "type": "string" }
             },
-            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"]
+            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"],
+            "allOf": [
+              {
+                "if": {
+                  "required": ["mappingDataSourceId"]
+                },
+                "then": {
+                  "required": ["mappingInternalId"]
+                }
+              },
+              {
+                "if": {
+                  "required": ["mappingInternalId"]
+                },
+                "then": {
+                  "required": ["mappingDataSourceId"]
+                }
+              }
+            ]
           }
         },
         "mysql": {
@@ -108,9 +148,29 @@
               },
               "crawlInterval": {
                 "type": "string"
-              }
+              },
+              "mappingDataSourceId": { "type": "string" },
+              "mappingInternalId": { "type": "string" }
             },
-            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"]
+            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"],
+            "allOf": [
+              {
+                "if": {
+                  "required": ["mappingDataSourceId"]
+                },
+                "then": {
+                  "required": ["mappingInternalId"]
+                }
+              },
+              {
+                "if": {
+                  "required": ["mappingInternalId"]
+                },
+                "then": {
+                  "required": ["mappingDataSourceId"]
+                }
+              }
+            ]
           }
         },
         "kubernetes": {

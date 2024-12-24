@@ -23,6 +23,12 @@ data:
               value: {{ .dbPass }}
             - name: crawl_interval
               value: {{ .crawlInterval }}
+          {{- if .mappingDataSourceId }}
+            - name: mapping_data_source_id
+              value: {{ .mappingDataSourceId }}
+            - name: mapping_internal_id
+              value: {{ .mappingInternalId }}
+          {{- end }}
         {{- end }}
         {{- range .Values.dataSources.mariadb }}
         - type: mariadb
@@ -38,6 +44,12 @@ data:
               value: {{ .dbPass }}
             - name: crawl_interval
               value: {{ .crawlInterval }}
+          {{- if .mappingDataSourceId }}
+            - name: mapping_data_source_id
+              value: {{ .mappingDataSourceId }}
+            - name: mapping_internal_id
+              value: {{ .mappingInternalId }}
+          {{- end }}
         {{- end }}
         {{- range .Values.dataSources.mysql }}
         - type: mysql
@@ -53,6 +65,12 @@ data:
               value: {{ .dbPass }}
             - name: crawl_interval
               value: {{ .crawlInterval }}
+          {{- if .mappingDataSourceId }}
+            - name: mapping_data_source_id
+              value: {{ .mappingDataSourceId }}
+            - name: mapping_internal_id
+              value: {{ .mappingInternalId }}
+          {{- end }}
         {{- end }}
         {{- range .Values.dataSources.kubernetes }}
         - type: kubernetes
