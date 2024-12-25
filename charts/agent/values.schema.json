@@ -220,6 +220,35 @@
             ]
           }
         },
+        "gcp_flow_logs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "crawlInterval": {
+                "type": "string"
+              },
+              "inCloud": {
+                "type": "boolean"
+              },
+              "credentialsFile": {
+                "type": "string"
+              },
+              "projectId": {
+                "type": "string"
+              }
+            },
+            "required": ["project_id", "crawl_interval"],
+            "oneOf": [
+              {
+                "required": ["inCloud"]
+              },
+              {
+                "required": ["credentialsFile"]
+              }
+            ]
+          }
+        },
         "aws": {
           "type": "array",
           "items": {

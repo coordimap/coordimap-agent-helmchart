@@ -73,3 +73,9 @@ dataSources:
   #     inCloud: true
   #     credentialsFile: ""
   #     projectId: ""
+  gcp_flow_logs: []
+  #   - id: gcp_flow_logs_test_id
+  #     crawlInterval: 120s
+  #     inCloud: true
+  #     credentialsFile: ""
+  #     projectId: ""
