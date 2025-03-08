@@ -15,6 +15,8 @@ resources:
     cpu: "500m"
     ephemeral-storage: "15Mi"
 
+serviceAccount: default
+
 # API configuration
 apiKey: "your-api-key-here"
 endpoint: "https://api.coordimap.com/collector/crawlers/infra"
@@ -69,12 +71,6 @@ dataSources:
   #     crawlInterval: 120s
   gcp: []
   #   - id: gcp_test_id
-  #     crawlInterval: 120s
-  #     inCloud: true
-  #     credentialsFile: ""
-  #     projectId: ""
-  gcp_flow_logs: []
-  #   - id: gcp_flow_logs_test_id
   #     crawlInterval: 120s
   #     inCloud: true
   #     credentialsFile: ""

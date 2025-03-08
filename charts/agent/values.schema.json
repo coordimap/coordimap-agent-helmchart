@@ -2,307 +2,658 @@
   "$schema": "https://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
+    "containerName": {
+      "type": "string",
+      "description": "The name of the agent container",
+      "default": "coordimap-agent"
+    },
+    "serviceAccount": {
+      "type": "string",
+      "description": "The service account to use for the agent",
+      "default": "default"
+    },
     "image": {
       "type": "object",
+      "description": "Docker image configuration",
       "properties": {
         "repository": {
-          "type": "string"
+          "type": "string",
+          "description": "Docker image repository",
+          "default": "coordimap/coordimap-agent"
         },
         "tag": {
-          "type": "string"
+          "type": "string",
+          "description": "Docker image tag",
+          "default": "latest"
         },
         "pullPolicy": {
-          "type": "string"
+          "type": "string",
+          "description": "Image pull policy",
+          "default": "Always",
+          "enum": [
+            "Always",
+            "IfNotPresent",
+            "Never"
+          ]
         }
       },
-      "required": ["repository", "tag"]
+      "required": [
+        "repository",
+        "tag"
+      ],
+      "additionalProperties": false
     },
     "resources": {
-      "type": "object"
+      "type": "object",
+      "description": "Resource requests and limits",
+      "properties": {
+        "requests": {
+          "type": "object",
+          "description": "Resource requests",
+          "properties": {
+            "memory": {
+              "type": "string",
+              "description": "Memory requests",
+              "default": "150M"
+            },
+            "cpu": {
+              "type": "string",
+              "description": "CPU requests",
+              "default": "500m"
+            },
+            "ephemeral-storage": {
+              "type": "string",
+              "description": "Ephemeral Storage requests",
+              "default": "15Mi"
+            }
+          },
+          "required": [
+            "memory",
+            "cpu",
+            "ephemeral-storage"
+          ],
+          "additionalProperties": false
+        },
+        "limits": {
+          "type": "object",
+          "description": "Resource limits",
+          "properties": {
+            "memory": {
+              "type": "string",
+              "description": "Memory limits",
+              "default": "150M"
+            },
+            "cpu": {
+              "type": "string",
+              "description": "CPU limits",
+              "default": "500m"
+            },
+            "ephemeral-storage": {
+              "type": "string",
+              "description": "Ephemeral Storage limits",
+              "default": "15Mi"
+            }
+          },
+          "required": [
+            "memory",
+            "cpu",
+            "ephemeral-storage"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     },
     "apiKey": {
-      "type": "string"
+      "type": "string",
+      "description": "Coordimap API key for authentication"
     },
     "endpoint": {
-      "type": "string"
+      "type": "string",
+      "description": "Coordimap API endpoint",
+      "default": "https://api.coordimap.com/collector/crawlers/infra"
     },
     "debug": {
-      "type": "boolean"
+      "type": "boolean",
+      "description": "Enable debug logging",
+      "default": true
     },
     "dataSources": {
       "type": "object",
+      "description": "Data sources configuration",
       "properties": {
         "postgres": {
           "type": "array",
+          "description": "PostgreSQL data sources",
           "items": {
             "type": "object",
+            "description": "PostgreSQL data source configuration",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Unique identifier for the database"
               },
               "dbName": {
-                "type": "string"
+                "type": "string",
+                "description": "Database name"
               },
               "dbHost": {
-                "type": "string"
+                "type": "string",
+                "description": "Database host address"
               },
               "dbUser": {
-                "type": "string"
+                "type": "string",
+                "description": "Database username"
               },
               "dbPass": {
-                "type": "string"
+                "type": "string",
+                "description": "Database password"
               },
               "crawlInterval": {
-                "type": "string"
+                "type": "string",
+                "description": "Frequency of data collection (e.g., 60s, 1m, 2h)",
+                "pattern": "^[0-9]+[smh]$"
               },
-              "mappingDataSourceId": { "type": "string" },
-              "mappingInternalId": { "type": "string" }
+              "mappingDataSourceId": {
+                "type": "string",
+                "description": "External source mapping ID"
+              },
+              "mappingInternalId": {
+                "type": "string",
+                "description": "Internal mapping ID"
+              }
             },
-            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"],
+            "required": [
+              "id",
+              "dbName",
+              "dbHost",
+              "dbUser",
+              "dbPass",
+              "crawlInterval"
+            ],
             "allOf": [
               {
                 "if": {
-                  "required": ["mappingDataSourceId"]
+                  "required": [
+                    "mappingDataSourceId"
+                  ]
                 },
                 "then": {
-                  "required": ["mappingInternalId"]
+                  "required": [
+                    "mappingInternalId"
+                  ]
                 }
               },
               {
                 "if": {
-                  "required": ["mappingInternalId"]
+                  "required": [
+                    "mappingInternalId"
+                  ]
                 },
                 "then": {
-                  "required": ["mappingDataSourceId"]
+                  "required": [
+                    "mappingDataSourceId"
+                  ]
                 }
               }
-            ]
+            ],
+            "additionalProperties": false
           }
         },
         "mariadb": {
           "type": "array",
+          "description": "MariaDB data sources",
           "items": {
             "type": "object",
+            "description": "MariaDB data source configuration",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Unique identifier for the database"
               },
               "dbName": {
-                "type": "string"
+                "type": "string",
+                "description": "Database name"
               },
               "dbHost": {
-                "type": "string"
+                "type": "string",
+                "description": "Database host address"
               },
               "dbUser": {
-                "type": "string"
+                "type": "string",
+                "description": "Database username"
               },
               "dbPass": {
-                "type": "string"
+                "type": "string",
+                "description": "Database password"
               },
               "crawlInterval": {
-                "type": "string"
+                "type": "string",
+                "description": "Frequency of data collection (e.g., 60s, 1m, 2h)",
+                "pattern": "^[0-9]+[smh]$"
               },
-              "mappingDataSourceId": { "type": "string" },
-              "mappingInternalId": { "type": "string" }
+              "mappingDataSourceId": {
+                "type": "string",
+                "description": "External source mapping ID"
+              },
+              "mappingInternalId": {
+                "type": "string",
+                "description": "Internal mapping ID"
+              }
             },
-            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"],
+            "required": [
+              "id",
+              "dbName",
+              "dbHost",
+              "dbUser",
+              "dbPass",
+              "crawlInterval"
+            ],
             "allOf": [
               {
                 "if": {
-                  "required": ["mappingDataSourceId"]
+                  "required": [
+                    "mappingDataSourceId"
+                  ]
                 },
                 "then": {
-                  "required": ["mappingInternalId"]
+                  "required": [
+                    "mappingInternalId"
+                  ]
                 }
               },
               {
                 "if": {
-                  "required": ["mappingInternalId"]
+                  "required": [
+                    "mappingInternalId"
+                  ]
                 },
                 "then": {
-                  "required": ["mappingDataSourceId"]
+                  "required": [
+                    "mappingDataSourceId"
+                  ]
                 }
               }
-            ]
+            ],
+            "additionalProperties": false
           }
         },
         "mysql": {
           "type": "array",
+          "description": "MySQL data sources",
           "items": {
             "type": "object",
+            "description": "MySQL data source configuration",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Unique identifier for the database"
               },
               "dbName": {
-                "type": "string"
+                "type": "string",
+                "description": "Database name"
               },
               "dbHost": {
-                "type": "string"
+                "type": "string",
+                "description": "Database host address"
               },
               "dbUser": {
-                "type": "string"
+                "type": "string",
+                "description": "Database username"
               },
               "dbPass": {
-                "type": "string"
+                "type": "string",
+                "description": "Database password"
               },
               "crawlInterval": {
-                "type": "string"
+                "type": "string",
+                "description": "Frequency of data collection (e.g., 60s, 1m, 2h)",
+                "pattern": "^[0-9]+[smh]$"
               },
-              "mappingDataSourceId": { "type": "string" },
-              "mappingInternalId": { "type": "string" }
+              "mappingDataSourceId": {
+                "type": "string",
+                "description": "External source mapping ID"
+              },
+              "mappingInternalId": {
+                "type": "string",
+                "description": "Internal mapping ID"
+              }
             },
-            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"],
+            "required": [
+              "id",
+              "dbName",
+              "dbHost",
+              "dbUser",
+              "dbPass",
+              "crawlInterval"
+            ],
             "allOf": [
               {
                 "if": {
-                  "required": ["mappingDataSourceId"]
+                  "required": [
+                    "mappingDataSourceId"
+                  ]
                 },
                 "then": {
-                  "required": ["mappingInternalId"]
+                  "required": [
+                    "mappingInternalId"
+                  ]
                 }
               },
               {
                 "if": {
-                  "required": ["mappingInternalId"]
+                  "required": [
+                    "mappingInternalId"
+                  ]
                 },
                 "then": {
-                  "required": ["mappingDataSourceId"]
+                  "required": [
+                    "mappingDataSourceId"
+                  ]
                 }
               }
-            ]
+            ],
+            "additionalProperties": false
           }
         },
         "kubernetes": {
           "type": "array",
+          "description": "Kubernetes data sources",
           "items": {
             "type": "object",
+            "description": "Kubernetes data source configuration",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Unique identifier for the cluster"
               },
               "inCluster": {
-                "type": "boolean"
+                "type": "boolean",
+                "description": "Whether to use in-cluster config"
               },
               "crawlInterval": {
-                "type": "string"
+                "type": "string",
+                "description": "Frequency of data collection (e.g., 60s, 1m, 2h)",
+                "pattern": "^[0-9]+[smh]$"
               }
             },
-            "required": ["id", "inCluster", "crawlInterval"]
+            "required": [
+              "id",
+              "inCluster",
+              "crawlInterval"
+            ],
+            "additionalProperties": false
           }
         },
         "gcp": {
           "type": "array",
+          "description": "GCP data sources",
           "items": {
             "type": "object",
+            "description": "GCP data source configuration",
             "properties": {
-              "crawlInterval": {
-                "type": "string"
-              },
-              "inCloud": {
-                "type": "boolean"
-              },
-              "credentialsFile": {
-                "type": "string"
+              "id": {
+                "type": "string",
+                "description": "Unique identifier for the GCP configuration"
               },
               "projectId": {
-                "type": "string"
+                "type": "string",
+                "description": "GCP project ID"
+              },
+              "inCloud": {
+                "type": "boolean",
+                "description": "Whether to use in-cluster GCP credentials"
+              },
+              "credentialsFile": {
+                "type": "string",
+                "description": "Path to GCP credentials file"
+              },
+              "crawlInterval": {
+                "type": "string",
+                "description": "Frequency of data collection (e.g., 60s, 1m, 2h)",
+                "pattern": "^[0-9]+[smh]$"
+              },
+              "gcpFlows": {
+                "type": "boolean",
+                "description": "Whether to activate GCP flows"
+              },
+              "externalMappings": {
+                "type": "string",
+                "description": "External Mappings for GCP flows"
+              },
+              "includeRegions": {
+                "type": "string",
+                "description": "Regions to include for the GCP"
               }
             },
-            "required": ["project_id", "crawl_interval"],
+            "required": [
+              "id",
+              "projectId",
+              "crawlInterval"
+            ],
             "oneOf": [
               {
-                "required": ["inCloud"]
+                "properties": {
+                  "inCloud": {
+                    "type": "boolean"
+                  },
+                  "credentialsFile": {
+                    "not": {}
+                  }
+                },
+                "required": [
+                  "inCloud"
+                ]
               },
               {
-                "required": ["credentialsFile"]
+                "properties": {
+                  "credentialsFile": {
+                    "type": "string"
+                  },
+                  "inCloud": {
+                    "not": {}
+                  }
+                },
+                "required": [
+                  "credentialsFile"
+                ]
               }
-            ]
+            ],
+            "additionalProperties": false
           }
         },
         "gcp_flow_logs": {
           "type": "array",
+          "description": "GCP Flow Logs data sources",
           "items": {
             "type": "object",
+            "description": "GCP Flow Logs data source configuration",
             "properties": {
-              "crawlInterval": {
-                "type": "string"
-              },
-              "inCloud": {
-                "type": "boolean"
-              },
-              "credentialsFile": {
-                "type": "string"
+              "id": {
+                "type": "string",
+                "description": "Unique identifier for the GCP configuration"
               },
               "projectId": {
-                "type": "string"
+                "type": "string",
+                "description": "GCP project ID"
+              },
+              "inCluster": {
+                "type": "boolean",
+                "description": "Whether to use in-cluster GCP credentials"
+              },
+              "credentialsFile": {
+                "type": "string",
+                "description": "Path to GCP credentials file"
+              },
+              "crawlInterval": {
+                "type": "string",
+                "description": "Frequency of data collection (e.g., 60s, 1m, 2h)",
+                "pattern": "^[0-9]+[smh]$"
               }
             },
-            "required": ["project_id", "crawl_interval"],
+            "required": [
+              "id",
+              "projectId",
+              "crawlInterval"
+            ],
             "oneOf": [
               {
-                "required": ["inCloud"]
+                "properties": {
+                  "inCloud": {
+                    "type": "boolean"
+                  },
+                  "credentialsFile": {
+                    "not": {}
+                  }
+                },
+                "required": [
+                  "inCloud"
+                ]
               },
               {
-                "required": ["credentialsFile"]
+                "properties": {
+                  "credentialsFile": {
+                    "type": "string"
+                  },
+                  "inCloud": {
+                    "not": {}
+                  }
+                },
+                "required": [
+                  "credentialsFile"
+                ]
               }
-            ]
+            ],
+            "additionalProperties": false
           }
         },
         "aws": {
           "type": "array",
+          "description": "AWS data sources",
           "items": {
             "type": "object",
+            "description": "AWS data source configuration",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Unique identifier for the AWS configuration"
               },
               "region": {
-                "type": "string"
+                "type": "string",
+                "description": "AWS region"
               },
               "accessKey": {
-                "type": "string"
+                "type": "string",
+                "description": "AWS access key ID"
               },
               "secretKey": {
-                "type": "string"
+                "type": "string",
+                "description": "AWS secret access key"
               },
               "crawlInterval": {
-                "type": "string"
+                "type": "string",
+                "description": "Frequency of data collection (e.g., 60s, 1m, 2h)",
+                "pattern": "^[0-9]+[smh]$"
               }
             },
-            "required": ["id", "region", "accessKey", "secretKey", "crawlInterval"]
+            "required": [
+              "id",
+              "region",
+              "accessKey",
+              "secretKey",
+              "crawlInterval"
+            ],
+            "additionalProperties": false
           }
         },
         "mongodb": {
           "type": "array",
+          "description": "MongoDB data sources",
           "items": {
             "type": "object",
+            "description": "MongoDB data source configuration",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Unique identifier for the MongoDB instance"
               },
               "dbName": {
-                "type": "string"
+                "type": "string",
+                "description": "Database name"
               },
               "dbHost": {
-                "type": "string"
+                "type": "string",
+                "description": "Database host address"
               },
               "dbUser": {
-                "type": "string"
+                "type": "string",
+                "description": "Database username"
               },
               "dbPass": {
-                "type": "string"
+                "type": "string",
+                "description": "Database password"
               },
               "crawlInterval": {
-                "type": "string"
+                "type": "string",
+                "description": "Frequency of data collection (e.g., 60s, 1m, 2h)",
+                "pattern": "^[0-9]+[smh]$"
+              },
+              "mappingDataSourceId": {
+                "type": "string",
+                "description": "External source mapping ID"
+              },
+              "mappingInternalId": {
+                "type": "string",
+                "description": "Internal mapping ID"
               }
             },
-            "required": ["id", "dbName", "dbHost", "dbUser", "dbPass", "crawlInterval"]
+            "required": [
+              "id",
+              "dbName",
+              "dbHost",
+              "dbUser",
+              "dbPass",
+              "crawlInterval"
+            ],
+            "allOf": [
+              {
+                "if": {
+                  "required": [
+                    "mappingDataSourceId"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "mappingInternalId"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "mappingInternalId"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "mappingDataSourceId"
+                  ]
+                }
+              }
+            ],
+            "additionalProperties": false
           }
         }
       },
       "additionalProperties": false
     }
   },
-  "required": ["image", "apiKey", "endpoint"]
+  "required": [
+    "image",
+    "resources",
+    "apiKey",
+    "endpoint",
+    "dataSources"
+  ],
+  "additionalProperties": false
 }

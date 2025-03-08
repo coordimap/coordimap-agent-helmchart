@@ -2,7 +2,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ .Release.Name }}-agent-cluster-role
-  namespace: {{ .Release.Namespace }}
 rules:
   - verbs:
       - "get"
@@ -37,11 +36,9 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ .Release.Name }}-agent-rolebinding
-  namespace: {{ .Release.Namespace }}
 subjects:
   - kind: ServiceAccount
-    name: default
-    namespace: {{ .Release.Namespace }}
+    name: {{ .Values.serviceAccount }}
 roleRef:
   kind: ClusterRole
   name: {{ .Release.Name }}-agent-cluster-role

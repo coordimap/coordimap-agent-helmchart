@@ -1,3 +1,6 @@
+{{- if not .Values.apiKey }}
+{{ fail "apiKey is required. Please set the apiKey value in values.yaml" }}
+{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,7 +16,7 @@ spec:
         app: {{ .Release.Name }}-agent
     spec:
       containers:
-        - name: coordimap-agent
+        - name: {{ .Release.Name }}-agent
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:

@@ -21,18 +21,104 @@ A Helm chart for deploying Coordimap agents to collect infrastructure metrics an
 
 ## Prerequisites
 
-- Kubernetes 1.16+
-- Helm 3.0+
-- Valid Coordimap API key
+*   Kubernetes cluster (v1.20+)
+*   Helm v3.x installed
+*   `kubectl` configured to connect to your cluster
+*   Coordimap API key
 
-## Installation
+## Adding the Helm Repository
+
+To add the Helm repository, use the following command:
 
 ```bash
 helm repo add coordimap https://charts.coordimap.com
 helm install my-coordimap coordimap/coordimap -f values.yaml
 ```
 
+## Installing the Chart
+
+1. Create a values-my-release.yaml file: Copy the values.yaml file to values-my-release.yaml and update the necessary values.
+
+2. Configure the Chart:
+
+You'll need to customize the chart by creating an override values file. Here are the most important parameters to configure:
+
+ * apiKey (Required): Your Coordimap API key. This is essential for the agent to authenticate with the Coordimap API.
+ * endpoint (Required): The Coordimap API endpoint URL. The default is https://api.coordimap.com/collector/crawlers/infra.
+ * dataSources (Required): This is where you define the sources from which the agent should collect data. You can configure:
+    * postgres
+    *  mariadb
+    *  mysql
+    *  kubernetes
+    *  aws
+    *  mongodb
+    *  gcp
+ * serviceAccount (Optional): The service account used to deploy the agent. Default is default.
+ * containerName (Optional): The container name. Default is coordimap-agent.
+ * image.repository: The Docker image repository for the agent. Default is coordimap/coordimap-agent.
+ * image.tag: The Docker image tag for the agent. Default is latest. Warning: This should be set to a specific version, not latest, for production deployments.
+ * image.pullPolicy: The image pull policy. Default is Always.
+ * resources.requests: Resource requests (CPU, memory) for the agent container.
+ * resources.limits: Resource limits (CPU, memory) for the agent container.
+ * debug: Whether to enable debug mode for the agent. Default is true.
+
+### An example of `values-my-release.yaml`
+
+```yaml
+apiKey: "YOUR_ACTUAL_API_KEY"
+endpoint: "https://api.coordimap.com/collector/crawlers/infra"
+debug: true
+containerName: coordimap-agent
+serviceAccount: my-service-account
+dataSources:
+  gcp:
+    - id: my-gcp-project
+      crawlInterval: 30s
+      inCloud: true
+      projectId: "gcp-project"
+      gcpFlows: true
+      externalMappings: europe-west3-pe-gke-cluster@kubeID123
+      includeRegions: europe-west3
+```
+
+3. Install the Chart: 
+Once you've created your values-my-release.yaml file, install the chart using the following command:
+
+`helm install my-coordimap-agent coordimap/coordimap-agent -f values-my-release.yaml -n my-namespace --create-namespace`
+
+* Replace `my-coordimap-agent` with the desired release name.
+* Replace `coordimap/coordimap-agent` with the chart name.
+* Replace `values-my-release.yaml` with the name of your values file.
+* Replace `my-namespace` with the namespace you want to use or remove --create-namespace if the namespace already exits.
+
+
+## Upgrading the Chart
+
+To upgrade an existing release to a new version of the chart, use the following command:
+
+```bash
+helm upgrade my-coordimap-agent coordimap/coordimap-agent -f values-my-release.yaml -n my-namespace
+```
+
+* Replace my-coordimap-agent with the desired release name.
+* Replace coordimap/coordimap-agent with the chart name.
+* Replace values-my-release.yaml with the name of your values file.
+* Replace my-namespace with the namespace you used for the installation.
+
+## Uninstalling the Chart
+
+To uninstall/delete the my-coordimap-agent release:
+
+```bash
+helm uninstall my-coordimap-agent -n my-namespace
+```
+
+* Replace my-coordimap-agent with the desired release name.
+* Replace my-namespace with the namespace you used for the installation.
+
 ## Configuration
+
+The following tables describe the configurable parameters of the coordimap-agent chart.
 
 ### Global Configuration Values
 
@@ -41,6 +127,8 @@ helm install my-coordimap coordimap/coordimap -f values.yaml
 | `apiKey`   | Coordimap API key for authentication | Yes      | -                                                    |
 | `endpoint` | Coordimap API endpoint               | Yes      | `https://api.coordimap.com/collector/crawlers/infra` |
 | `debug`    | Enable debug logging                 | No       | `false`                                              |
+| `containerName`    | The container name | No       | `coordimap-agent`                                              |
+| `serviceAccount`    | The service account to use for the deployment | No       | `default`                                              |
 
 ### Image Configuration
 
@@ -170,4 +258,4 @@ dataSources:
 
 ## License
 
-Copyright (c) 2024 Coordimap
+Copyright (c) 2025 Coordimap
