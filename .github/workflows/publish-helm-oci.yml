@@ -39,17 +39,17 @@ jobs:
 
       - name: Log in to GHCR
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_PAT: ${{ secrets.GHCR_PAT }}
         run: |
-          echo "${GITHUB_TOKEN}" | helm registry login ghcr.io \
+          echo "${GHCR_PAT}" | helm registry login ghcr.io \
             --username "${{ github.actor }}" \
             --password-stdin
 
       - name: Log in to GHCR for ORAS
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_PAT: ${{ secrets.GHCR_PAT }}
         run: |
-          echo "${GITHUB_TOKEN}" | oras login ghcr.io \
+          echo "${GHCR_PAT}" | oras login ghcr.io \
             --username "${{ github.actor }}" \
             --password-stdin
 
