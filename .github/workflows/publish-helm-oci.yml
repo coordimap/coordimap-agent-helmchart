@@ -45,6 +45,14 @@ jobs:
             --username "${{ github.actor }}" \
             --password-stdin
 
+      - name: Log in to GHCR for ORAS
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "${GITHUB_TOKEN}" | oras login ghcr.io \
+            --username "${{ github.actor }}" \
+            --password-stdin
+
       - name: Lint chart
         run: helm lint ./charts/agent
 
