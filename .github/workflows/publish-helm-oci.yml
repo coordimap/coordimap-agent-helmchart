@@ -40,17 +40,19 @@ jobs:
       - name: Log in to GHCR
         env:
           GHCR_PAT: ${{ secrets.GHCR_PAT }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
         run: |
           echo "${GHCR_PAT}" | helm registry login ghcr.io \
-            --username "${{ github.actor }}" \
+            --username "${GHCR_USERNAME}" \
             --password-stdin
 
       - name: Log in to GHCR for ORAS
         env:
           GHCR_PAT: ${{ secrets.GHCR_PAT }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
         run: |
           echo "${GHCR_PAT}" | oras login ghcr.io \
-            --username "${{ github.actor }}" \
+            --username "${GHCR_USERNAME}" \
             --password-stdin
 
       - name: Lint chart
