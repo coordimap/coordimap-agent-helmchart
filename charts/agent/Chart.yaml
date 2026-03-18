@@ -1,8 +1,38 @@
 apiVersion: v2
 name: coordimap-agent
-description: A Helm chart for deploying Coordimap agent in Kubernetes
+description: Helm chart for deploying the Coordimap Agent on Kubernetes
+type: application
 version: 0.1.0
 appVersion: "latest"
+home: https://coordimap.com
+sources:
+  - https://github.com/coordimap/coordimap-agent-helmchart
+icon: https://coordimap.com/images/coordimap-og-01.png
+keywords:
+  - coordimap
+  - kubernetes
+  - helm
+  - devops
+  - sre
+  - platform-engineering
+  - observability
+  - incident-response
+annotations:
+  artifacthub.io/alternativeName: coordimap
+  artifacthub.io/category: monitoring-logging
+  artifacthub.io/images: |
+    - name: coordimap-agent
+      image: coordimap/coordimap-agent:latest
+  artifacthub.io/links: |
+    - name: Website
+      url: https://coordimap.com
+    - name: Source
+      url: https://github.com/coordimap/coordimap-agent-helmchart
+    - name: support
+      url: https://github.com/coordimap/coordimap-agent-helmchart/issues
+  artifacthub.io/maintainers: |
+    - name: Ermal Guni
+      email: ermalguni@gmail.com
 maintainers:
   - name: "Ermal Guni"
     email: "ermalguni@gmail.com"
