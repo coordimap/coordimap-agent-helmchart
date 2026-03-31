@@ -43,6 +43,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ .Values.serviceAccount }}
+    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ .Release.Name }}-agent-cluster-role
