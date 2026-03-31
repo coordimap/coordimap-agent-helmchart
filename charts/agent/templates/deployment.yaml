@@ -6,6 +6,8 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-agent
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "coordimap.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -14,6 +16,7 @@ spec:
     metadata:
       labels:
         app: {{ .Release.Name }}-agent
+        {{- include "coordimap.labels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ .Values.serviceAccount }}
       containers:
