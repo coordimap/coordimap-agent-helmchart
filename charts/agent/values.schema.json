@@ -81,6 +81,56 @@
       "description": "Enable debug logging",
       "default": true
     },
+    "extraEnv": {
+      "type": "array",
+      "description": "Extra environment variables for the agent container",
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Environment variable name"
+          },
+          "value": {
+            "type": ["string", "number", "boolean"],
+            "description": "Literal environment variable value"
+          },
+          "valueFrom": {
+            "type": "object",
+            "properties": {
+              "secretKeyRef": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Secret name"
+                  },
+                  "key": {
+                    "type": "string",
+                    "description": "Secret key"
+                  },
+                  "optional": {
+                    "type": "boolean",
+                    "description": "Whether the secret key is optional"
+                  }
+                },
+                "required": ["name", "key"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["secretKeyRef"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["name"],
+        "oneOf": [
+          { "required": ["value"] },
+          { "required": ["valueFrom"] }
+        ],
+        "additionalProperties": false
+      }
+    },
     "dataSources": {
       "type": "array",
       "description": "Coordimap Agent data sources rendered directly into coordimap.data_sources",

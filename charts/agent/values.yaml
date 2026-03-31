@@ -28,6 +28,17 @@ apiKey: "your-api-key-here"
 endpoint: "https://api.coordimap.com/collector/crawlers/infra"
 debug: true
 
+# Extra environment variables for the agent container.
+# Each item is rendered directly into the container env list.
+extraEnv: []
+#  - name: LOG_LEVEL
+#    value: info
+#  - name: POSTGRES_PASSWORD
+#    valueFrom:
+#      secretKeyRef:
+#        name: postgres-secret
+#        key: password
+
 # Upstream-native Coordimap Agent data source configuration.
 # Each item maps directly to an entry under coordimap.data_sources.
 dataSources: []

@@ -128,6 +128,25 @@ commonLabels:
   environment: production
   team: platform
 
+extraEnv:
+  - name: LOG_LEVEL
+    value: info
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: postgres-secret
+        key: password
+  - name: AWS_ACCESS_KEY_ID
+    valueFrom:
+      secretKeyRef:
+        name: aws-credentials
+        key: access-key-id
+  - name: AWS_SECRET_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: aws-credentials
+        key: secret-access-key
+
 resources:
   requests:
     memory: "150M"
@@ -194,6 +213,53 @@ helm install coordimap-agent ./charts/agent \
   -f values.yaml
 ```
 
+## Environment variables
+
+Use `extraEnv` to add environment variables to the agent pod.
+
+Set a literal value:
+
+```yaml
+extraEnv:
+  - name: LOG_LEVEL
+    value: info
+```
+
+Reference a Kubernetes Secret:
+
+```yaml
+extraEnv:
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: postgres-secret
+        key: password
+```
+
+This is useful when a data source config expects an environment variable placeholder such as `${POSTGRES_PASSWORD}` or `${AWS_SECRET_ACCESS_KEY}`.
+
+Example with `dataSources`:
+
+```yaml
+extraEnv:
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: postgres-secret
+        key: password
+
+dataSources:
+  - type: postgres
+    name: postgres-primary
+    config:
+      - name: db_host
+        value: users-db.example.com
+      - name: db_user
+        value: users_admin
+      - name: db_pass
+        value: ${POSTGRES_PASSWORD}
+```
+
 ## Configuration highlights
 
 Important values for developers and DevOps engineers:
@@ -207,6 +273,7 @@ Important values for developers and DevOps engineers:
 | `image.tag` | Pins the deployed agent version |
 | `serviceAccount` | Selects the Kubernetes service account |
 | `commonLabels` | Adds custom labels to all rendered resources and pods |
+| `extraEnv` | Adds extra pod environment variables from literal values or Secrets |
 | `resources.requests` | Reserves CPU, memory, and ephemeral storage |
 | `resources.limits` | Caps CPU, memory, and ephemeral storage |
 | `dataSources` | Defines upstream-native agent data source entries |
@@ -262,9 +329,10 @@ The workflow runs on tags that match `chart-v*` and can also be started manually
 
 - The chart currently uses `latest` as the default image tag; pin a fixed tag in production for safer rollouts.
 - `apiKey` is required and chart rendering fails if it is missing.
+- `extraEnv` supports either `value` or `valueFrom.secretKeyRef` for each variable.
 - Crawl intervals are validated in the templates and must end with `s`, `m`, or `h`.
 - The generated agent configuration is assembled from Helm values in `charts/agent/templates/configmap.yaml`.
-- The deployment mounts the generated config at `/config.yaml` and injects the API key through the `COORDIMAP_API_KEY` environment variable.
+- The deployment mounts the generated config at `/config.yaml`, injects the API key through `COORDIMAP_API_KEY`, and appends any entries from `extraEnv` to the pod environment.
 
 ## Use cases and search topics
 

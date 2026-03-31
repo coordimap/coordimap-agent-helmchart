@@ -31,6 +31,9 @@ jobs:
         with:
           version: v3.15.4
 
+      - name: Verify README files stay in sync
+        run: diff -u README.md charts/agent/README.md
+
       - name: Lint chart
         run: helm lint ./charts/agent
 
