@@ -15,6 +15,7 @@ spec:
       labels:
         app: {{ .Release.Name }}-agent
     spec:
+      serviceAccountName: {{ .Values.serviceAccount }}
       containers:
         - name: {{ .Release.Name }}-agent
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -28,7 +29,7 @@ spec:
             - "--endpoint"
             - "{{ .Values.endpoint }}"
           env:
-            - name: API_KEY
+            - name: COORDIMAP_API_KEY
               value: "{{ .Values.apiKey }}"
           volumeMounts:
             - mountPath: /config.yaml

@@ -1,8 +1,6 @@
 # Coordimap Agent Helm Chart
 
-The Coordimap Agent Helm chart deploys the Coordimap Agent on Kubernetes so developers, DevOps engineers, platform teams, and SREs can collect infrastructure metadata and metrics from supported systems and send them to the Coordimap platform.
-
-Coordimap is described on [coordimap.com](https://coordimap.com) as incident dependency mapping for Kubernetes-first SRE teams, with live dependency context, blast-radius analysis, and change correlation to improve incident response. This chart provides the Kubernetes deployment package for that data collection layer.
+The Coordimap Agent Helm chart deploys the Coordimap Agent on Kubernetes and renders an upstream-native `config.yaml` for the agent.
 
 ## Chart location
 
@@ -15,8 +13,11 @@ This chart is stored in `charts/agent`.
 - MySQL
 - Kubernetes
 - AWS
-- MongoDB
+- AWS Flow Logs
 - GCP
+- GCP Flow Logs
+- MongoDB
+- Flows
 
 ## Prerequisites
 
@@ -33,27 +34,6 @@ helm install coordimap-agent ./charts/agent \
   --namespace coordimap \
   --create-namespace \
   --set apiKey="YOUR_API_KEY"
-```
-
-For production deployments, prefer a values file and a pinned image tag.
-
-## OCI install
-
-This chart can be published and installed as an OCI Helm chart from GitHub Container Registry:
-
-```bash
-helm registry login ghcr.io
-helm install coordimap-agent oci://ghcr.io/coordimap/charts/coordimap-agent \
-  --version 0.1.0 \
-  --namespace coordimap \
-  --create-namespace \
-  -f values.yaml
-```
-
-For Artifact Hub, the repository URL to register is:
-
-```text
-oci://ghcr.io/coordimap/charts/coordimap-agent
 ```
 
 ## Example values
@@ -81,82 +61,52 @@ resources:
     ephemeral-storage: "15Mi"
 
 dataSources:
-  kubernetes:
-    - id: prod-cluster-001
-      inCluster: true
-      crawlInterval: 30s
+  - type: kubernetes
+    name: k8s-cluster-1
+    desc: Main Kubernetes Cluster
+    config:
+      - name: scope_id
+        value: your_k8s_cluster_uid
+      - name: in_cluster
+        value: "true"
+      - name: cluster_name
+        value: main-cluster
+      - name: crawl_interval
+        value: 30s
 
-  postgres:
-    - id: users-db-001
-      dbName: users
-      dbHost: users-db.example.com
-      dbUser: users_admin
-      dbPass: users_password
-      crawlInterval: 60s
-```
-
-Install with a values file:
-
-```bash
-helm install coordimap-agent ./charts/agent \
-  --namespace coordimap \
-  --create-namespace \
-  -f values.yaml
+  - type: postgres
+    name: postgres-primary
+    desc: Primary PostgreSQL Database
+    config:
+      - name: scope_id
+        value: your-postgres-system-identifier
+      - name: db_name
+        value: mydatabase
+      - name: db_host
+        value: postgres.default.svc
+      - name: db_user
+        value: postgres
+      - name: db_pass
+        value: ${POSTGRES_PASSWORD}
+      - name: ssl_mode
+        value: require
+      - name: crawl_interval
+        value: 30s
 ```
 
 ## Important configuration
 
 | Key | Purpose |
 | --- | --- |
-| `apiKey` | Authenticates the agent with Coordimap |
+| `apiKey` | Injected as `COORDIMAP_API_KEY` for the agent config |
 | `endpoint` | Sets the collector API endpoint |
 | `debug` | Enables verbose logging |
-| `image.repository` | Chooses the container image |
-| `image.tag` | Pins the deployed agent version |
-| `serviceAccount` | Selects the Kubernetes service account |
-| `resources.requests` | Reserves CPU, memory, and ephemeral storage |
-| `resources.limits` | Caps CPU, memory, and ephemeral storage |
-| `dataSources.*` | Defines database, cloud, and cluster collection targets |
+| `serviceAccount` | Selects the Kubernetes service account used by the pod |
+| `dataSources` | Upstream-native `coordimap.data_sources` entries |
 
-See `charts/agent/values.yaml` for the full examples and defaults.
-
-## Kubernetes resources created
-
-This chart creates:
-
-- a `Deployment` for the Coordimap Agent
-- a `ConfigMap` for rendered agent configuration
-- a `ClusterRole` and `ClusterRoleBinding` for Kubernetes discovery access
-
-The RBAC template grants read access to common cluster resources such as nodes, namespaces, pods, services, configmaps, secrets, deployments, statefulsets, daemonsets, jobs, cronjobs, storage classes, and ingresses. Review these permissions before deploying in restricted environments.
-
-## Validation and operations
-
-```bash
-helm lint ./charts/agent
-helm template coordimap-agent ./charts/agent -f values.yaml
-helm upgrade --install coordimap-agent ./charts/agent -n coordimap -f values.yaml
-```
-
-Useful checks after deployment:
-
-```bash
-kubectl get pods -n coordimap
-kubectl describe deployment coordimap-agent-agent -n coordimap
-kubectl logs deployment/coordimap-agent-agent -n coordimap
-```
-
-## Developer notes
+## Notes
 
 - `apiKey` is required and template rendering fails if it is missing.
-- Crawl intervals are validated in the templates and must end with `s`, `m`, or `h`.
+- `crawl_interval` entries are validated in the templates and must end with `s`, `m`, or `h`.
 - The generated agent config is assembled in `charts/agent/templates/configmap.yaml`.
-- The deployment mounts the config at `/config.yaml` and passes the API key through the `API_KEY` environment variable.
-- The default image tag is `latest`; pin a tested version for production.
-
-## Learn more
-
-- product website: [coordimap.com](https://coordimap.com)
-- root repository guide: [`README.md`](../../README.md)
-- chart metadata: [`charts/agent/Chart.yaml`](Chart.yaml)
-- chart defaults: [`charts/agent/values.yaml`](values.yaml)
+- The deployment mounts the config at `/config.yaml` and injects the API key through the `COORDIMAP_API_KEY` environment variable.

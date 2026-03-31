@@ -1,3 +1,4 @@
+{{- include "coordimap.datasource.validate" . -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,151 +7,35 @@ metadata:
 data:
   config.yaml: |-
     coordimap:
-      api_key: ${API_KEY}
+      api_key: ${COORDIMAP_API_KEY}
       data_sources:
-        {{- range .Values.dataSources.postgres }}
-        - type: postgres
-          id: {{ .id }}
-          {{- if not (regexMatch "^[0-9]+[smh]$" .crawlInterval) }}
-          {{ fail (printf "Invalid value for crawlInterval. The value for postgres in dataSources should end with 's', 'm' or 'h'. Value is: %s" .crawlInterval) }}
-          {{- end }}
+{{- if .Values.dataSources }}
+{{- range $source := .Values.dataSources }}
+{{- if not $source.type }}
+{{- fail "Each data source requires a type" }}
+{{- end }}
+{{- if not $source.name }}
+{{- fail "Each data source requires a name" }}
+{{- end }}
+{{- if not $source.config }}
+{{- fail (printf "Data source %s requires a config array" $source.name) }}
+{{- end }}
+        - type: {{ $source.type }}
+          name: {{ $source.name | quote }}
+{{- if hasKey $source "desc" }}
+          desc: {{ $source.desc | quote }}
+{{- end }}
           config:
-            - name: db_name
-              value: {{ .dbName }}
-            - name: db_host
-              value: {{ .dbHost }}
-            - name: db_user
-              value: {{ .dbUser }}
-            - name: db_pass
-              value: {{ .dbPass }}
-            - name: crawl_interval
-              value: {{ .crawlInterval }}
-          {{- if .mappingDataSourceId }}
-            - name: mapping_data_source_id
-              value: {{ .mappingDataSourceId }}
-            - name: mapping_internal_id
-              value: {{ .mappingInternalId }}
-          {{- end }}
-        {{- end }}
-        {{- range .Values.dataSources.mariadb }}
-        - type: mariadb
-          id: {{ .id }}
-          {{- if not (regexMatch "^[0-9]+[smh]$" .crawlInterval) }}
-          {{ fail (printf "Invalid value for crawlInterval. The value for mariadb in dataSources should end with 's', 'm' or 'h'. Value is: %s" .crawlInterval) }}
-          {{- end }}
-          config:
-            - name: db_name
-              value: {{ .dbName }}
-            - name: db_host
-              value: {{ .dbHost }}
-            - name: db_user
-              value: {{ .dbUser }}
-            - name: db_pass
-              value: {{ .dbPass }}
-            - name: crawl_interval
-              value: {{ .crawlInterval }}
-          {{- if .mappingDataSourceId }}
-            - name: mapping_data_source_id
-              value: {{ .mappingDataSourceId }}
-            - name: mapping_internal_id
-              value: {{ .mappingInternalId }}
-          {{- end }}
-        {{- end }}
-        {{- range .Values.dataSources.mysql }}
-        - type: mysql
-          id: {{ .id }}
-          {{- if not (regexMatch "^[0-9]+[smh]$" .crawlInterval) }}
-          {{ fail (printf "Invalid value for crawlInterval. The value for mysql in dataSources should end with 's', 'm' or 'h'. Value is: %s" .crawlInterval) }}
-          {{- end }}
-          config:
-            - name: db_name
-              value: {{ .dbName }}
-            - name: db_host
-              value: {{ .dbHost }}
-            - name: db_user
-              value: {{ .dbUser }}
-            - name: db_pass
-              value: {{ .dbPass }}
-            - name: crawl_interval
-              value: {{ .crawlInterval }}
-          {{- if .mappingDataSourceId }}
-            - name: mapping_data_source_id
-              value: {{ .mappingDataSourceId }}
-            - name: mapping_internal_id
-              value: {{ .mappingInternalId }}
-          {{- end }}
-        {{- end }}
-        {{- range .Values.dataSources.kubernetes }}
-        - type: kubernetes
-          id: {{ .id }}
-          {{- if not (regexMatch "^[0-9]+[smh]$" .crawlInterval) }}
-          {{ fail (printf "Invalid value for crawlInterval. The value for kubernetes in dataSources should end with 's', 'm' or 'h'. Value is: %s" .crawlInterval) }}
-          {{- end }}
-          config:
-            - name: in_cluster
-              value: {{ .inCluster | quote }}
-            - name: crawl_interval
-              value: {{ .crawlInterval }}
-        {{- end }}
-        {{- range .Values.dataSources.aws }}
-        - type: aws
-          id: {{ .id }}
-          {{- if not (regexMatch "^[0-9]+[smh]$" .crawlInterval) }}
-          {{ fail (printf "Invalid value for crawlInterval. The value for aws in dataSources should end with 's', 'm' or 'h'. Value is: %s" .crawlInterval) }}
-          {{- end }}
-          config:
-            - name: region
-              value: {{ .region }}
-            - name: access_key
-              value: {{ .accessKey }}
-            - name: secret_key
-              value: {{ .secretKey }}
-            - name: crawl_interval
-              value: {{ .crawlInterval }}
-        {{- end }}
-        {{- range .Values.dataSources.mongodb }}
-        - type: mongodb
-          id: {{ .id }}
-          {{- if not (regexMatch "^[0-9]+[smh]$" .crawlInterval) }}
-          {{ fail (printf "Invalid value for crawlInterval. The value for mongodb in dataSources should end with 's', 'm' or 'h'. Value is: %s" .crawlInterval) }}
-          {{- end }}
-          config:
-            - name: db_name
-              value: {{ .dbName }}
-            - name: db_host
-              value: {{ .dbHost }}
-            - name: db_user
-              value: {{ .dbUser }}
-            - name: db_pass
-              value: {{ .dbPass }}
-            - name: crawl_interval
-              value: {{ .crawlInterval }}
-        {{- end }}
-        {{- range .Values.dataSources.gcp }}
-            - type: gcp
-              id: {{ .id }}
-              {{- if not (regexMatch "^[0-9]+[smh]$" .crawlInterval) }}
-              {{ fail (printf "Invalid value for crawlInterval. The value for gcp in dataSources should end with 's', 'm' or 'h'. Value is: %s" .crawlInterval) }}
-              {{- end }}
-              config:
-                {{- if .inCluster }}
-                - name: in_cluster
-                  value: {{ .inCluster | quote }}
-                {{- end }}
-                {{- if .credentialsFile }}
-                - name: credentials_file
-                  value: {{ .credentialsFile }}
-                {{- end }}
-                - name: project_id
-                  value: {{ .projectId }}
-                - name: crawl_interval
-                  value: {{ .crawlInterval }}
-                {{- if .gcpFlows }}
-                - name: gcp_flows
-                  value: {{ .gcpFlows | quote }}
-                {{- end }}
-                - name: external_mappings
-                  value: {{ .externalMappings }}
-                - name: include_regions
-                  value: {{ .projectId }}
-        {{- end }}
+{{- range $entry := $source.config }}
+{{- if eq $entry.name "crawl_interval" }}
+{{- if not (regexMatch "^[0-9]+[smh]$" (printf "%v" $entry.value)) }}
+{{- fail (printf "Invalid crawl_interval for data source %s. Value must end with 's', 'm' or 'h'. Value is: %v" $source.name $entry.value) }}
+{{- end }}
+{{- end }}
+            - name: {{ $entry.name }}
+              value: {{ $entry.value | quote }}
+{{- end }}
+{{- end }}
+{{- else }}
+        []
+{{- end }}

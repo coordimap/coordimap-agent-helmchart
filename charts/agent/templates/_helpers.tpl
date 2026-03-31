@@ -1,11 +1,11 @@
 {{/*
-Validate data source type and return configuration
+Validate supported data source types.
 */}}
-{{- define "coordimap.datasource.config" -}}
-{{- $validTypes := (list "postgres" "mariadb" "mysql" "kubernetes" "aws" "mongodb") -}}
-{{- range $type, $sources := .Values.dataSources -}}
-{{- if not (has $type $validTypes) -}}
-{{- fail (printf "Invalid data source type: %s. Allowed types are: %s" $type (join ", " $validTypes)) -}}
+{{- define "coordimap.datasource.validate" -}}
+{{- $validTypes := list "aws" "gcp" "postgres" "mysql" "mariadb" "kubernetes" "aws_flow_logs" "flows" "mongodb" "gcp_flow_logs" -}}
+{{- range $source := .Values.dataSources -}}
+{{- if not (has $source.type $validTypes) -}}
+{{- fail (printf "Invalid data source type: %s. Allowed types are: %s" $source.type (join ", " $validTypes)) -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}

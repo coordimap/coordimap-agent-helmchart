@@ -61,10 +61,13 @@ The current chart templates support these Coordimap Agent data source types:
 - MySQL
 - Kubernetes
 - AWS
+- AWS Flow Logs
 - MongoDB
 - GCP
+- GCP Flow Logs
+- Flows
 
-Each source can be configured with its own identifier and crawl interval so teams can tune collection frequency per environment.
+Each source is configured with the upstream-native `type`, `name`, optional `desc`, and `config` entries so the chart can track the agent config format without per-type Helm rewrites.
 
 ## Prerequisites
 
@@ -132,25 +135,50 @@ resources:
     ephemeral-storage: "15Mi"
 
 dataSources:
-  kubernetes:
-    - id: prod-cluster-001
-      inCluster: true
-      crawlInterval: 30s
+  - type: kubernetes
+    name: k8s-cluster-1
+    desc: Main Kubernetes Cluster
+    config:
+      - name: scope_id
+        value: your_k8s_cluster_uid
+      - name: in_cluster
+        value: "true"
+      - name: cluster_name
+        value: main-cluster
+      - name: crawl_interval
+        value: 30s
 
-  postgres:
-    - id: users-db-001
-      dbName: users
-      dbHost: users-db.example.com
-      dbUser: users_admin
-      dbPass: users_password
-      crawlInterval: 60s
+  - type: postgres
+    name: postgres-primary
+    desc: Primary PostgreSQL Database
+    config:
+      - name: scope_id
+        value: your-postgres-system-identifier
+      - name: db_name
+        value: users
+      - name: db_host
+        value: users-db.example.com
+      - name: db_user
+        value: users_admin
+      - name: db_pass
+        value: ${POSTGRES_PASSWORD}
+      - name: crawl_interval
+        value: 60s
 
-  aws:
-    - id: prod-aws-001
-      region: us-west-2
-      accessKey: AWS_ACCESS_KEY_ID
-      secretKey: AWS_SECRET_ACCESS_KEY
-      crawlInterval: 120s
+  - type: aws
+    name: aws-production
+    desc: Production AWS Account
+    config:
+      - name: scope_id
+        value: your-aws-account-id
+      - name: policy_config
+        value: "true"
+      - name: access_key_id
+        value: ${AWS_ACCESS_KEY_ID}
+      - name: secret_access_key
+        value: ${AWS_SECRET_ACCESS_KEY}
+      - name: crawl_interval
+        value: 120s
 ```
 
 Install with that file:
@@ -176,7 +204,7 @@ Important values for developers and DevOps engineers:
 | `serviceAccount` | Selects the Kubernetes service account |
 | `resources.requests` | Reserves CPU, memory, and ephemeral storage |
 | `resources.limits` | Caps CPU, memory, and ephemeral storage |
-| `dataSources.*` | Defines databases, cloud accounts, and cluster targets |
+| `dataSources` | Defines upstream-native agent data source entries |
 
 See `charts/agent/values.yaml` for the full set of examples and defaults.
 
@@ -231,7 +259,7 @@ The workflow runs on tags that match `chart-v*` and can also be started manually
 - `apiKey` is required and chart rendering fails if it is missing.
 - Crawl intervals are validated in the templates and must end with `s`, `m`, or `h`.
 - The generated agent configuration is assembled from Helm values in `charts/agent/templates/configmap.yaml`.
-- The deployment mounts the generated config at `/config.yaml` and injects the API key through the `API_KEY` environment variable.
+- The deployment mounts the generated config at `/config.yaml` and injects the API key through the `COORDIMAP_API_KEY` environment variable.
 
 ## Use cases and search topics
 

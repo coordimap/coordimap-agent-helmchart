@@ -1,4 +1,4 @@
-# Default values for coordimap chart
+# Default values for Coordimap Agent.
 
 image:
   repository: coordimap/coordimap-agent
@@ -22,56 +22,60 @@ apiKey: "your-api-key-here"
 endpoint: "https://api.coordimap.com/collector/crawlers/infra"
 debug: true
 
-# Data sources configuration
-dataSources:
-  # Example of multiple PostgreSQL databases
-  postgres: []
-  #   - id: users-db-001
-  #     dbName: users
-  #     dbHost: users-db.example.com
-  #     dbUser: users_admin
-  #     dbPass: users_pwd
-  #     crawlInterval: 60s
-  #   - id: orders-db-001
-  #     dbName: orders
-  #     dbHost: orders-db.example.com
-  #     dbUser: orders_admin
-  #     dbPass: orders_pwd
-  #     crawlInterval: 30s
-  #
-  # # Example of a single MariaDB instance
-  mariadb: []
-  #   - id: analytics-001
-  #     dbName: analytics
-  #     dbHost: analytics-db.example.com
-  #     dbUser: analytics_user
-  #     dbPass: analytics_pwd
-  #     crawlInterval: 120s
-  #
-  # # Example of multiple Kubernetes clusters
-  kubernetes: []
-  #   - id: prod-cluster-001
-  #     inCluster: true
-  #     crawlInterval: 30s
-  #   - id: staging-cluster-001
-  #     inCluster: false
-  #     crawlInterval: 60s
-  #
-  # # Example of multiple AWS regions
-  aws: []
-  #   - id: us-west-prod-001
-  #     region: us-west-2
-  #     accessKey: AKIAXXXXXXXXXXXXXXXX
-  #     secretKey: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  #     crawlInterval: 120s
-  #   - id: eu-west-prod-001
-  #     region: eu-west-1
-  #     accessKey: AKIAYYYYYYYYYYYYYYY
-  #     secretKey: YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
-  #     crawlInterval: 120s
-  gcp: []
-  #   - id: gcp_test_id
-  #     crawlInterval: 120s
-  #     inCloud: true
-  #     credentialsFile: ""
-  #     projectId: ""
+# Upstream-native Coordimap Agent data source configuration.
+# Each item maps directly to an entry under coordimap.data_sources.
+dataSources: []
+#  - type: kubernetes
+#    name: k8s-cluster-1
+#    desc: Main Kubernetes Cluster
+#    config:
+#      - name: scope_id
+#        value: your_k8s_cluster_uid
+#      - name: in_cluster
+#        value: "true"
+#      - name: cluster_name
+#        value: main-cluster
+#      - name: crawl_interval
+#        value: 30s
+#
+#  - type: postgres
+#    name: postgres-primary
+#    desc: Primary PostgreSQL Database
+#    config:
+#      - name: scope_id
+#        value: your-postgres-system-identifier
+#      - name: db_name
+#        value: mydatabase
+#      - name: db_host
+#        value: postgres.default.svc
+#      - name: db_user
+#        value: postgres
+#      - name: db_pass
+#        value: ${POSTGRES_PASSWORD}
+#      - name: ssl_mode
+#        value: require
+#      - name: crawl_interval
+#        value: 30s
+#
+#  - type: aws_flow_logs
+#    name: flowlogs-vpc-1
+#    desc: VPC Flow Logs from S3
+#    config:
+#      - name: scope_id
+#        value: your-aws-account-id
+#      - name: log_format
+#        value: all
+#      - name: log_type
+#        value: S3
+#      - name: account_id
+#        value: "123456789012"
+#      - name: bucket_name
+#        value: my-flowlogs-bucket
+#      - name: region
+#        value: eu-central-1
+#      - name: access_key_id
+#        value: ${AWS_ACCESS_KEY_ID}
+#      - name: secret_access_key
+#        value: ${AWS_SECRET_ACCESS_KEY}
+#      - name: crawl_interval
+#        value: 30s
