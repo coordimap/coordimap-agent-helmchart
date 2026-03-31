@@ -3,9 +3,42 @@
   "type": "object",
   "properties": {
     "serviceAccount": {
-      "type": "string",
-      "description": "The service account to use for the agent",
-      "default": "default"
+      "description": "Service account configuration for the agent",
+      "default": {
+        "create": true,
+        "name": "",
+        "annotations": {}
+      },
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Legacy service account name. If set, the chart uses an existing account."
+        },
+        {
+          "type": "object",
+          "properties": {
+            "create": {
+              "type": "boolean",
+              "description": "Whether the chart should create the service account",
+              "default": true
+            },
+            "name": {
+              "type": "string",
+              "description": "Service account name. Defaults to <release-name>-agent when empty.",
+              "default": ""
+            },
+            "annotations": {
+              "type": "object",
+              "description": "Annotations applied when the chart creates the service account",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "default": {}
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
     },
     "commonLabels": {
       "type": "object",

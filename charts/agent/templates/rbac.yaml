@@ -42,7 +42,7 @@ metadata:
     {{- include "coordimap.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ .Values.serviceAccount }}
+    name: {{ include "coordimap.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole

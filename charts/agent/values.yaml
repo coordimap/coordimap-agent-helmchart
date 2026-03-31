@@ -15,7 +15,12 @@ resources:
     cpu: "500m"
     ephemeral-storage: "15Mi"
 
-serviceAccount: default
+# Service account configuration used by the deployment and RBAC binding.
+# Set create=false to use an existing service account.
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
 
 # Extra labels applied to all rendered resources and pods.
 commonLabels: {}

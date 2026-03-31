@@ -23,3 +23,31 @@ helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" }}
 {{ toYaml . }}
 {{- end }}
 {{- end -}}
+
+{{/*
+Resolve the service account name from either the legacy string value or
+the structured serviceAccount object.
+*/}}
+{{- define "coordimap.serviceAccountName" -}}
+{{- if kindIs "string" .Values.serviceAccount -}}
+{{- default (printf "%s-agent" .Release.Name) .Values.serviceAccount -}}
+{{- else -}}
+{{- default (printf "%s-agent" .Release.Name) .Values.serviceAccount.name -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Whether the chart should create the service account.
+Legacy string values imply using an existing account unless empty.
+*/}}
+{{- define "coordimap.serviceAccountCreate" -}}
+{{- if kindIs "string" .Values.serviceAccount -}}
+{{- if .Values.serviceAccount }}false{{ else }}true{{ end -}}
+{{- else -}}
+{{- if hasKey .Values.serviceAccount "create" -}}
+{{- .Values.serviceAccount.create -}}
+{{- else -}}
+true
+{{- end -}}
+{{- end -}}
+{{- end -}}

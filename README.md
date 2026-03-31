@@ -122,7 +122,10 @@ image:
   tag: "latest"
   pullPolicy: Always
 
-serviceAccount: default
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
 
 commonLabels:
   environment: production
@@ -238,6 +241,39 @@ extraEnv:
 
 This is useful when a data source config expects an environment variable placeholder such as `${POSTGRES_PASSWORD}` or `${AWS_SECRET_ACCESS_KEY}`.
 
+## Service accounts
+
+Use `serviceAccount` to control whether the chart creates a Kubernetes service account or binds to an existing one.
+
+Create and manage the service account from the chart:
+
+```yaml
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+```
+
+Use an existing service account:
+
+```yaml
+serviceAccount:
+  create: false
+  name: coordimap-agent
+```
+
+Example for GKE Workload Identity:
+
+```yaml
+serviceAccount:
+  create: true
+  name: coordimap-agent
+  annotations:
+    iam.gke.io/gcp-service-account: coordimap-agent@test.iam.gserviceaccount.com
+```
+
+When `serviceAccount.name` is empty, the chart defaults to `<release-name>-agent`.
+
 Example with `dataSources`:
 
 ```yaml
@@ -264,19 +300,21 @@ dataSources:
 
 Important values for developers and DevOps engineers:
 
-| Key | Purpose |
-| --- | --- |
-| `apiKey` | Authenticates the agent with Coordimap |
-| `endpoint` | Sets the collector API endpoint |
-| `debug` | Enables verbose agent logging |
-| `image.repository` | Chooses the container image |
-| `image.tag` | Pins the deployed agent version |
-| `serviceAccount` | Selects the Kubernetes service account |
-| `commonLabels` | Adds custom labels to all rendered resources and pods |
-| `extraEnv` | Adds extra pod environment variables from literal values or Secrets |
-| `resources.requests` | Reserves CPU, memory, and ephemeral storage |
-| `resources.limits` | Caps CPU, memory, and ephemeral storage |
-| `dataSources` | Defines upstream-native agent data source entries |
+| Key                          | Purpose                                                             |
+| ---------------------------- | ------------------------------------------------------------------- |
+| `apiKey`                     | Authenticates the agent with Coordimap                              |
+| `endpoint`                   | Sets the collector API endpoint                                     |
+| `debug`                      | Enables verbose agent logging                                       |
+| `image.repository`           | Chooses the container image                                         |
+| `image.tag`                  | Pins the deployed agent version                                     |
+| `serviceAccount.create`      | Controls whether the chart creates the Kubernetes service account   |
+| `serviceAccount.name`        | Sets the Kubernetes service account name                            |
+| `serviceAccount.annotations` | Adds annotations to a chart-managed service account                 |
+| `commonLabels`               | Adds custom labels to all rendered resources and pods               |
+| `extraEnv`                   | Adds extra pod environment variables from literal values or Secrets |
+| `resources.requests`         | Reserves CPU, memory, and ephemeral storage                         |
+| `resources.limits`           | Caps CPU, memory, and ephemeral storage                             |
+| `dataSources`                | Defines upstream-native agent data source entries                   |
 
 See `charts/agent/values.yaml` for the full set of examples and defaults.
 
