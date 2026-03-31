@@ -17,6 +17,12 @@ resources:
 
 serviceAccount: default
 
+# Extra labels applied to all rendered resources and pods.
+commonLabels: {}
+#  environment: production
+#  team: platform
+#  app.kubernetes.io/part-of: coordimap
+
 # API configuration
 apiKey: "your-api-key-here"
 endpoint: "https://api.coordimap.com/collector/crawlers/infra"

@@ -50,6 +50,10 @@ image:
 
 serviceAccount: default
 
+commonLabels:
+  environment: production
+  team: platform
+
 resources:
   requests:
     memory: "150M"
@@ -102,6 +106,7 @@ dataSources:
 | `endpoint` | Sets the collector API endpoint |
 | `debug` | Enables verbose logging |
 | `serviceAccount` | Selects the Kubernetes service account used by the pod |
+| `commonLabels` | Adds custom labels to all rendered resources and pods |
 | `dataSources` | Upstream-native `coordimap.data_sources` entries |
 
 ## Notes

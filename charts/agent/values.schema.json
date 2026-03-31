@@ -7,6 +7,14 @@
       "description": "The service account to use for the agent",
       "default": "default"
     },
+    "commonLabels": {
+      "type": "object",
+      "description": "Extra labels applied to all rendered resources and pods",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
     "image": {
       "type": "object",
       "description": "Docker image configuration",

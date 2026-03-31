@@ -124,6 +124,10 @@ image:
 
 serviceAccount: default
 
+commonLabels:
+  environment: production
+  team: platform
+
 resources:
   requests:
     memory: "150M"
@@ -202,6 +206,7 @@ Important values for developers and DevOps engineers:
 | `image.repository` | Chooses the container image |
 | `image.tag` | Pins the deployed agent version |
 | `serviceAccount` | Selects the Kubernetes service account |
+| `commonLabels` | Adds custom labels to all rendered resources and pods |
 | `resources.requests` | Reserves CPU, memory, and ephemeral storage |
 | `resources.limits` | Caps CPU, memory, and ephemeral storage |
 | `dataSources` | Defines upstream-native agent data source entries |
