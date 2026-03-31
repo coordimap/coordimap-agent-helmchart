@@ -47,10 +47,10 @@ extraEnv: []
 
 # Upstream-native Coordimap Agent data source configuration.
 # Each item maps directly to an entry under coordimap.data_sources.
+# Use the data source id from the Coordimap UI; name and desc are not supported.
 dataSources: []
 #  - type: kubernetes
-#    name: k8s-cluster-1
-#    desc: Main Kubernetes Cluster
+#    id: ds_k8s_cluster_1
 #    config:
 #      - name: scope_id
 #        value: your_k8s_cluster_uid
@@ -62,8 +62,7 @@ dataSources: []
 #        value: 30s
 #
 #  - type: postgres
-#    name: postgres-primary
-#    desc: Primary PostgreSQL Database
+#    id: ds_postgres_primary
 #    config:
 #      - name: scope_id
 #        value: your-postgres-system-identifier
@@ -81,8 +80,7 @@ dataSources: []
 #        value: 30s
 #
 #  - type: aws_flow_logs
-#    name: flowlogs-vpc-1
-#    desc: VPC Flow Logs from S3
+#    id: ds_flowlogs_vpc_1
 #    config:
 #      - name: scope_id
 #        value: your-aws-account-id

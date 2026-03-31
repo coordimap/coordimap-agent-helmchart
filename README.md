@@ -67,7 +67,7 @@ The current chart templates support these Coordimap Agent data source types:
 - GCP Flow Logs
 - Flows
 
-Each source is configured with the upstream-native `type`, `name`, optional `desc`, and `config` entries so the chart can track the agent config format without per-type Helm rewrites.
+Each source is configured with the upstream-native `type`, `id`, and `config` entries so the chart can track the agent config format without per-type Helm rewrites. The `id` must be copied from the Coordimap UI after creating the data source there.
 
 ## Prerequisites
 
@@ -162,8 +162,7 @@ resources:
 
 dataSources:
   - type: kubernetes
-    name: k8s-cluster-1
-    desc: Main Kubernetes Cluster
+    id: ds_k8s_cluster_1
     config:
       - name: scope_id
         value: your_k8s_cluster_uid
@@ -175,8 +174,7 @@ dataSources:
         value: 30s
 
   - type: postgres
-    name: postgres-primary
-    desc: Primary PostgreSQL Database
+    id: ds_postgres_primary
     config:
       - name: scope_id
         value: your-postgres-system-identifier
@@ -192,8 +190,7 @@ dataSources:
         value: 60s
 
   - type: aws
-    name: aws-production
-    desc: Production AWS Account
+    id: ds_aws_production
     config:
       - name: scope_id
         value: your-aws-account-id
@@ -286,7 +283,7 @@ extraEnv:
 
 dataSources:
   - type: postgres
-    name: postgres-primary
+    id: ds_postgres_primary
     config:
       - name: db_host
         value: users-db.example.com
@@ -317,6 +314,25 @@ Important values for developers and DevOps engineers:
 | `dataSources`                | Defines upstream-native agent data source entries                   |
 
 See `charts/agent/values.yaml` for the full set of examples and defaults.
+
+## Data source IDs
+
+Each entry in `dataSources` must include an `id` string from the Coordimap UI.
+
+The chart does not support `name` or `desc` for agent data sources. Create or inspect the data source in the Coordimap UI, copy its ID, and place it in your values file.
+
+Example:
+
+```yaml
+dataSources:
+  - type: postgres
+    id: ds_postgres_primary
+    config:
+      - name: db_host
+        value: users-db.example.com
+      - name: db_user
+        value: users_admin
+```
 
 ## Kubernetes and security behavior
 

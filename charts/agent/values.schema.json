@@ -174,13 +174,9 @@
             "type": "string",
             "description": "Data source type"
           },
-          "name": {
+          "id": {
             "type": "string",
-            "description": "Data source name"
-          },
-          "desc": {
-            "type": "string",
-            "description": "Optional description for the data source"
+            "description": "Data source id retrieved from the Coordimap UI"
           },
           "config": {
             "type": "array",
@@ -202,7 +198,7 @@
             }
           }
         },
-        "required": ["type", "name", "config"],
+        "required": ["type", "id", "config"],
         "additionalProperties": false
       }
     }

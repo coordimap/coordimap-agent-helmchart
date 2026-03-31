@@ -16,22 +16,19 @@ data:
 {{- if not $source.type }}
 {{- fail "Each data source requires a type" }}
 {{- end }}
-{{- if not $source.name }}
-{{- fail "Each data source requires a name" }}
+{{- if not $source.id }}
+{{- fail "Each data source requires an id" }}
 {{- end }}
 {{- if not $source.config }}
-{{- fail (printf "Data source %s requires a config array" $source.name) }}
+{{- fail (printf "Data source %s requires a config array" $source.id) }}
 {{- end }}
         - type: {{ $source.type }}
-          name: {{ $source.name | quote }}
-{{- if hasKey $source "desc" }}
-          desc: {{ $source.desc | quote }}
-{{- end }}
+          id: {{ $source.id | quote }}
           config:
 {{- range $entry := $source.config }}
 {{- if eq $entry.name "crawl_interval" }}
 {{- if not (regexMatch "^[0-9]+[smh]$" (printf "%v" $entry.value)) }}
-{{- fail (printf "Invalid crawl_interval for data source %s. Value must end with 's', 'm' or 'h'. Value is: %v" $source.name $entry.value) }}
+{{- fail (printf "Invalid crawl_interval for data source %s. Value must end with 's', 'm' or 'h'. Value is: %v" $source.id $entry.value) }}
 {{- end }}
 {{- end }}
             - name: {{ $entry.name }}
