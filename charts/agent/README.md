@@ -172,6 +172,16 @@ dataSources:
         value: main-cluster
       - name: crawl_interval
         value: 30s
+    metric_rules:
+      - id: k8s-high-5xx
+        name: Kubernetes Service High 5xx
+        provider: prometheus
+        mode: predefined
+        predefined:
+          name: kubernetes_service_high_5xx
+          params:
+            window: 5m
+            threshold: 1
 
   - type: postgres
     id: ds_postgres_primary
@@ -312,6 +322,7 @@ Important values for developers and DevOps engineers:
 | `resources.requests`         | Reserves CPU, memory, and ephemeral storage                         |
 | `resources.limits`           | Caps CPU, memory, and ephemeral storage                             |
 | `dataSources`                | Defines upstream-native agent data source entries                   |
+| `dataSources[].metric_rules` | Defines optional metric trigger rules for kubernetes and gcp        |
 
 See `charts/agent/values.yaml` for the full set of examples and defaults.
 
@@ -332,6 +343,42 @@ dataSources:
         value: users-db.example.com
       - name: db_user
         value: users_admin
+```
+
+## Metric trigger rules
+
+Metric trigger rules can be set per data source and are rendered into `coordimap.data_sources[*].metric_rules`.
+
+- supported source types: `kubernetes`, `gcp`
+- supported providers: `prometheus`, `gcp_monitoring`
+- required fields per rule: `id`, `name`, `provider`, `mode`
+- `mode: custom` requires `custom`
+- `mode: predefined` requires `predefined`
+- use either `metric_rules` (snake_case) or `metricRules` (camelCase) in Helm values, but not both in the same data source
+
+Example:
+
+```yaml
+dataSources:
+  - type: gcp
+    id: ds_gcp_prod
+    config:
+      - name: scope_id
+        value: "123456789012"
+      - name: project_id
+        value: my-gcp-project
+      - name: crawl_interval
+        value: 30s
+    metric_rules:
+      - id: cloudsql-high-cpu
+        name: CloudSQL High CPU
+        provider: gcp_monitoring
+        mode: predefined
+        predefined:
+          name: cloudsql_high_cpu
+          params:
+            lookback: 5m
+            threshold: 0.8
 ```
 
 ## Kubernetes and security behavior
@@ -387,6 +434,8 @@ The workflow runs on tags that match `chart-v*` and can also be started manually
 - Crawl intervals are validated in the templates and must end with `s`, `m`, or `h`.
 - The generated agent configuration is assembled from Helm values in `charts/agent/templates/configmap.yaml`.
 - The deployment mounts the generated config at `/config.yaml`, injects the API key through `COORDIMAP_API_KEY`, and appends any entries from `extraEnv` to the pod environment.
+- Metric rules are supported for `kubernetes` and `gcp` data sources and rendered to `metric_rules` in the generated config.
+- The chart accepts both `metric_rules` and `metricRules` in values; setting both keys on one source fails validation.
 
 ## Use cases and search topics
 

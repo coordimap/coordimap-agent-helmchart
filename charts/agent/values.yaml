@@ -48,6 +48,9 @@ extraEnv: []
 # Upstream-native Coordimap Agent data source configuration.
 # Each item maps directly to an entry under coordimap.data_sources.
 # Use the data source id from the Coordimap UI; name and desc are not supported.
+# Metric trigger rules are supported on kubernetes and gcp sources via
+# either metric_rules (snake_case) or metricRules (camelCase).
+# Do not set both keys on the same source.
 dataSources: []
 #  - type: kubernetes
 #    id: ds_k8s_cluster_1
@@ -60,6 +63,21 @@ dataSources: []
 #        value: main-cluster
 #      - name: crawl_interval
 #        value: 30s
+#    metric_rules:
+#      - id: k8s-high-5xx
+#        name: Kubernetes Service High 5xx
+#        provider: prometheus
+#        mode: custom
+#        custom:
+#          query: sum(rate(istio_requests_total{response_code=~"5.."}[5m])) by (destination_workload_namespace, destination_canonical_service)
+#        lookback: 5m
+#        threshold:
+#          operator: ">"
+#          value: 1
+#        target:
+#          resolver: kubernetes_service
+#          namespace_label: destination_workload_namespace
+#          name_label: destination_canonical_service
 #
 #  - type: postgres
 #    id: ds_postgres_primary

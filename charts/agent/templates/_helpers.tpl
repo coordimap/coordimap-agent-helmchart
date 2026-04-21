@@ -3,9 +3,18 @@ Validate supported data source types.
 */}}
 {{- define "coordimap.datasource.validate" -}}
 {{- $validTypes := list "aws" "gcp" "postgres" "mysql" "mariadb" "kubernetes" "aws_flow_logs" "flows" "mongodb" "gcp_flow_logs" -}}
+{{- $metricRuleTypes := list "kubernetes" "gcp" -}}
 {{- range $source := .Values.dataSources -}}
 {{- if not (has $source.type $validTypes) -}}
 {{- fail (printf "Invalid data source type: %s. Allowed types are: %s" $source.type (join ", " $validTypes)) -}}
+{{- end -}}
+{{- $hasCamelMetricRules := hasKey $source "metricRules" -}}
+{{- $hasSnakeMetricRules := hasKey $source "metric_rules" -}}
+{{- if and $hasCamelMetricRules $hasSnakeMetricRules -}}
+{{- fail (printf "Data source %s uses both metricRules and metric_rules. Set only one." $source.id) -}}
+{{- end -}}
+{{- if and (or $hasCamelMetricRules $hasSnakeMetricRules) (not (has $source.type $metricRuleTypes)) -}}
+{{- fail (printf "Data source %s has metric rules but type %s does not support metric rules. Supported types are: %s" $source.id $source.type (join ", " $metricRuleTypes)) -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}

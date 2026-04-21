@@ -22,6 +22,11 @@ data:
 {{- if not $source.config }}
 {{- fail (printf "Data source %s requires a config array" $source.id) }}
 {{- end }}
+{{- $hasCamelMetricRules := hasKey $source "metricRules" }}
+{{- $metricRules := $source.metric_rules }}
+{{- if $hasCamelMetricRules }}
+{{- $metricRules = $source.metricRules }}
+{{- end }}
         - type: {{ $source.type }}
           id: {{ $source.id | quote }}
           config:
@@ -33,6 +38,34 @@ data:
 {{- end }}
             - name: {{ $entry.name }}
               value: {{ $entry.value | quote }}
+{{- end }}
+{{- if $metricRules }}
+          metric_rules:
+{{- range $rule := $metricRules }}
+            - id: {{ $rule.id | quote }}
+              name: {{ $rule.name | quote }}
+              provider: {{ $rule.provider | quote }}
+              mode: {{ $rule.mode | quote }}
+{{- if $rule.custom }}
+              custom:
+{{ toYaml $rule.custom | nindent 16 }}
+{{- end }}
+{{- if $rule.predefined }}
+              predefined:
+{{ toYaml $rule.predefined | nindent 16 }}
+{{- end }}
+{{- if $rule.lookback }}
+              lookback: {{ $rule.lookback | quote }}
+{{- end }}
+{{- if $rule.threshold }}
+              threshold:
+{{ toYaml $rule.threshold | nindent 16 }}
+{{- end }}
+{{- if $rule.target }}
+              target:
+{{ toYaml $rule.target | nindent 16 }}
+{{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- else }}

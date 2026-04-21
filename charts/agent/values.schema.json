@@ -196,6 +196,153 @@
               "required": ["name", "value"],
               "additionalProperties": false
             }
+          },
+          "metricRules": {
+            "type": "array",
+            "description": "Optional metric trigger rules rendered into data_sources[*].metric_rules",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Stable metric rule id"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Display name for the rule"
+                },
+                "provider": {
+                  "type": "string",
+                  "description": "Metric backend provider",
+                  "enum": ["prometheus", "gcp_monitoring"]
+                },
+                "mode": {
+                  "type": "string",
+                  "description": "Rule mode",
+                  "enum": ["custom", "predefined"]
+                },
+                "custom": {
+                  "type": "object",
+                  "description": "Custom query/filter payload for provider-specific rules",
+                  "properties": {
+                    "query": {
+                      "type": "string",
+                      "description": "Prometheus query expression"
+                    },
+                    "filter": {
+                      "type": "string",
+                      "description": "GCP Monitoring filter expression"
+                    },
+                    "metric_type": {
+                      "type": "string",
+                      "description": "GCP Monitoring metric type"
+                    },
+                    "alignment_period": {
+                      "type": "string"
+                    },
+                    "per_series_aligner": {
+                      "type": "string"
+                    },
+                    "cross_series_reducer": {
+                      "type": "string"
+                    },
+                    "group_by_fields": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "predefined": {
+                  "type": "object",
+                  "description": "Predefined template name and parameters",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Predefined rule template name"
+                    },
+                    "params": {
+                      "type": "object",
+                      "description": "Template parameters",
+                      "additionalProperties": {
+                        "type": ["string", "number", "boolean"]
+                      }
+                    }
+                  },
+                  "required": ["name"],
+                  "additionalProperties": false
+                },
+                "lookback": {
+                  "type": "string",
+                  "description": "Lookback duration used by evaluation"
+                },
+                "threshold": {
+                  "type": "object",
+                  "properties": {
+                    "operator": {
+                      "type": "string",
+                      "description": "Comparison operator",
+                      "enum": [">", ">=", "<", "<=", "==", "!="]
+                    },
+                    "value": {
+                      "type": "number",
+                      "description": "Threshold value"
+                    }
+                  },
+                  "required": ["operator", "value"],
+                  "additionalProperties": false
+                },
+                "target": {
+                  "type": "object",
+                  "description": "Resolver and labels used to map triggered metrics",
+                  "properties": {
+                    "resolver": {
+                      "type": "string",
+                      "enum": [
+                        "kubernetes_service",
+                        "kubernetes_deployment",
+                        "kubernetes_pod",
+                        "kubernetes_pvc",
+                        "kubernetes_statefulset",
+                        "gcp_cloudsql",
+                        "gcp_vm_instance",
+                        "external_mapping"
+                      ]
+                    }
+                  },
+                  "required": ["resolver"],
+                  "additionalProperties": {
+                    "type": ["string", "number", "boolean"]
+                  }
+                }
+              },
+              "required": ["id", "name", "provider", "mode"],
+              "allOf": [
+                {
+                  "if": {
+                    "properties": { "mode": { "const": "custom" } }
+                  },
+                  "then": {
+                    "required": ["custom"]
+                  }
+                },
+                {
+                  "if": {
+                    "properties": { "mode": { "const": "predefined" } }
+                  },
+                  "then": {
+                    "required": ["predefined"]
+                  }
+                }
+              ],
+              "additionalProperties": false
+            }
+          },
+          "metric_rules": {
+            "$ref": "#/properties/dataSources/items/properties/metricRules",
+            "description": "Snake_case alias for metricRules"
           }
         },
         "required": ["type", "id", "config"],
