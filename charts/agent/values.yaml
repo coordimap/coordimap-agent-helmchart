@@ -34,6 +34,14 @@ endpoint: "https://api.coordimap.com/collector/crawlers/infra"
 # Enable the agent debug CLI flag. When false, the flag is omitted.
 debug: true
 
+# Data source config keys omitted from payloads sent to Coordimap.
+# This maps to upstream coordimap.skip_fields and does not remove fields from
+# the agent's local runtime configuration.
+skipFields: []
+#  - db_pass
+#  - access_key_id
+#  - secret_access_key
+
 # Extra environment variables for the agent container.
 # Each item is rendered directly into the container env list.
 extraEnv: []

@@ -131,6 +131,11 @@ commonLabels:
   environment: production
   team: platform
 
+skipFields:
+  - db_pass
+  - access_key_id
+  - secret_access_key
+
 extraEnv:
   - name: LOG_LEVEL
     value: info
@@ -248,6 +253,23 @@ extraEnv:
 
 This is useful when a data source config expects an environment variable placeholder such as `${POSTGRES_PASSWORD}` or `${AWS_SECRET_ACCESS_KEY}`.
 
+## Skip fields
+
+Use `skipFields` to omit data source config keys from the payload sent to Coordimap. The chart renders this value as upstream `coordimap.skip_fields` in the generated agent config.
+
+Example:
+
+```yaml
+skipFields:
+  - db_pass
+  - access_key_id
+  - secret_access_key
+```
+
+This does not remove fields from the agent's local runtime configuration. The agent can still use credentials and connection settings while crawling, then strips matching config keys from `data_source_config.value_pairs` before sending data to the collector.
+
+Use lowercase names that match `dataSources[].config[].name`. The agent lowercases data source config keys before comparing them to `skip_fields`.
+
 ## Service accounts
 
 Use `serviceAccount` to control whether the chart creates a Kubernetes service account or binds to an existing one.
@@ -312,6 +334,7 @@ Important values for developers and DevOps engineers:
 | `apiKey`                     | Authenticates the agent with Coordimap                              |
 | `endpoint`                   | Sets the collector API endpoint                                     |
 | `debug`                      | Enables verbose agent logging                                       |
+| `skipFields`                 | Omits matching data source config keys from outbound payloads       |
 | `image.repository`           | Chooses the container image                                         |
 | `image.tag`                  | Pins the deployed agent version                                     |
 | `serviceAccount.create`      | Controls whether the chart creates the Kubernetes service account   |
@@ -431,6 +454,7 @@ The workflow runs on tags that match `chart-v*` and can also be started manually
 - The chart currently uses `latest` as the default image tag; pin a fixed tag in production for safer rollouts.
 - `apiKey` is required and chart rendering fails if it is missing.
 - `extraEnv` supports either `value` or `valueFrom.secretKeyRef` for each variable.
+- `skipFields` renders to `coordimap.skip_fields` and strips matching data source config keys from outbound payloads.
 - Crawl intervals are validated in the templates and must end with `s`, `m`, or `h`.
 - The generated agent configuration is assembled from Helm values in `charts/agent/templates/configmap.yaml`.
 - The deployment mounts the generated config at `/config.yaml`, injects the API key through `COORDIMAP_API_KEY`, and appends any entries from `extraEnv` to the pod environment.

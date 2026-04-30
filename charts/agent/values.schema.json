@@ -114,6 +114,16 @@
       "description": "Enable debug logging",
       "default": true
     },
+    "skipFields": {
+      "type": "array",
+      "description": "Data source config keys omitted from payloads sent to Coordimap, rendered as coordimap.skip_fields",
+      "default": [],
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
     "extraEnv": {
       "type": "array",
       "description": "Extra environment variables for the agent container",

@@ -10,6 +10,8 @@ data:
   config.yaml: |-
     coordimap:
       api_key: ${COORDIMAP_API_KEY}
+      skip_fields:
+{{- toYaml (.Values.skipFields | default list) | nindent 8 }}
       data_sources:
 {{- if .Values.dataSources }}
 {{- range $source := .Values.dataSources }}
